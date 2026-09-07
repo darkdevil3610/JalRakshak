@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JalRakshak — AI Flood Early-Warning & Advisory Assistant</title>
+  <style>
+    /* Reset & Design System */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-dark: #cbd5e1;
+      --primary: #0d5c75;
+      --primary-dark: #062128;
+      --primary-light: #e0f2fe;
+      --secondary: #0284c7;
+      --accent: #d97706;
+      --high-red: #dc2626;
+      --high-bg: #fee2e2;
+      --high-border: #fca5a5;
+      --med-amber: #d97706;
+      --med-bg: #fef3c7;
+      --med-border: #fcd34d;
+      --low-green: #16a34a;
+      --low-bg: #dcfce7;
+      --low-border: #86efac;
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 2rem;
+    }
+
+    /* Layout Containers */
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 1.25rem;
+    }
+
+    /* Navbar */
+    header {
+      background-color: var(--primary-dark);
+      color: #ffffff;
+      border-bottom: 1px solid #164e63;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 0.85rem 0;
+    }
+    .nav-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .logo-badge {
+      width: 2.4rem;
+      height: 2.4rem;
+      background: linear-gradient(135deg, #38bdf8, #0d9488);
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: #ffffff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .tag-intern {
+      font-size: 0.7rem;
+      background: rgba(13, 148, 136, 0.3);
+      color: #5eead4;
+      border: 1px solid rgba(45, 212, 191, 0.4);
+      padding: 0.15rem 0.5rem;
+      border-radius: 9999px;
+      font-weight: 600;
+    }
+    .brand-sub {
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+    .sdg-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+    .sdg-chip {
+      padding: 0.25rem 0.6rem;
+      border-radius: 0.375rem;
+    }
+    .sdg-13 { background: #0c4a6e; color: #7dd3fc; border: 1px solid #0369a1; }
+    .sdg-11 { background: #064e3b; color: #6ee7b7; border: 1px solid #047857; }
+    .sdg-6  { background: #1e3a8a; color: #93c5fd; border: 1px solid #1d4ed8; }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      margin-top: 1.5rem;
+    }
+
+    /* Hero Banner */
+    .hero-flex {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    @media (min-width: 900px) {
+      .hero-flex {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+    .hero-eyebrow {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.25rem;
+    }
+    .hero-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
+      margin-bottom: 0.4rem;
+    }
+    .hero-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      max-width: 42rem;
+    }
+    .scenario-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .btn-preset {
+      cursor: pointer;
+      border: 1px solid transparent;
+      padding: 0.6rem 1rem;
+      border-radius: 0.65rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.15s ease;
+    }
+    .btn-preset:hover { transform: translateY(-1px); }
+    .btn-preset-a { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+    .btn-preset-b { background: #dcfce7; color: #166534; border-color: #86efac; }
+    .btn-preset-c { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
+
+    /* 2-Column Main Grid */
+    .grid-main {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    @media (min-width: 960px) {
+      .grid-main {
+        grid-template-columns: 7fr 5fr;
+      }
+    }
+
+    /* Forms & Sliders */
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .section-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 0.35rem;
+    }
+    select {
+      width: 100%;
+      background: #f8fafc;
+      border: 1px solid var(--border-dark);
+      border-radius: 0.5rem;
+      padding: 0.55rem 0.75rem;
+      font-size: 0.85rem;
+      color: var(--text-main);
+      font-family: inherit;
+      outline: none;
+    }
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(13, 92, 117, 0.15);
+    }
+
+    .slider-box {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.6rem;
+    }
+    .slider-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    .slider-hint {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      display: block;
+    }
+    .slider-badge {
+      background: #ffffff;
+      border: 1px solid var(--border-dark);
+      border-radius: 0.375rem;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .slider-ticks {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.65rem;
+      color: var(--text-light);
+      margin-top: 0.35rem;
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      outline: none;
+      cursor: pointer;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 18px;
+      width: 18px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      cursor: pointer;
+    }
+    input[type=range]::-moz-range-thumb {
+      height: 18px;
+      width: 18px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      cursor: pointer;
+      border: none;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #334155;
+      margin-top: 0.5rem;
+    }
+
+    /* Output Card */
+    .output-card {
+      border: 2px solid var(--border);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      background: #ffffff;
+      transition: all 0.2s ease;
+    }
+    .output-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .risk-tag-sub {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+    .risk-pill {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .score-large {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text-main);
+      text-align: right;
+    }
+    .score-denom {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .points-bar {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.5rem;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 0.6rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .pts-label {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      display: block;
+    }
+    .pts-val {
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .infra-banner {
+      background: #fef3c7;
+      border: 1px solid #fcd34d;
+      border-radius: 0.65rem;
+      padding: 0.75rem;
+      color: #78350f;
+      font-size: 0.75rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    /* Advisory Boxes */
+    .adv-box {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 0.65rem;
+      padding: 1rem;
+      margin-bottom: 0.85rem;
+    }
+    .adv-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.4rem;
+    }
+    .adv-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #475569;
+    }
+    .btn-copy {
+      background: transparent;
+      border: none;
+      color: var(--primary);
+      font-size: 0.68rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-copy:hover { text-decoration: underline; }
+    .adv-text {
+      font-size: 0.8rem;
+      color: #1e293b;
+      line-height: 1.45;
+    }
+    .adv-text-ml {
+      font-family: inherit;
+      font-weight: 500;
+    }
+
+    .helpline-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f1f5f9;
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem;
+      color: #475569;
+      font-weight: 600;
+    }
+    .badge-1070 {
+      background: #fee2e2;
+      color: #dc2626;
+      border: 1px solid #fca5a5;
+      padding: 0.15rem 0.45rem;
+      border-radius: 0.3rem;
+      font-weight: 800;
+    }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+      margin-top: 0.75rem;
+    }
+    th {
+      text-align: left;
+      padding: 0.6rem 0.75rem;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border-dark);
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+    td {
+      padding: 0.65rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      color: #334155;
+    }
+    tr:hover td {
+      background: #f8fafc;
+      cursor: pointer;
+    }
+    .pill-sm {
+      display: inline-block;
+      padding: 0.15rem 0.45rem;
+      border-radius: 9999px;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+
+    /* 2-Col Cards (Architecture & BOB) */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    @media (min-width: 768px) {
+      .grid-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    .step-item {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 0.6rem 0.75rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.75rem;
+      color: #334155;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header>
+    <div class="container nav-row">
+      <div class="brand-box">
+        <div class="logo-badge">JR</div>
+        <div>
+          <div class="brand-title">
+            JalRakshak
+            <span class="tag-intern">1M1B Sep 2026</span>
+          </div>
+          <div class="brand-sub">AI-Powered Flood Early-Warning & Advisory Assistant · Kerala Urban Wards</div>
+        </div>
+      </div>
+      <div class="sdg-chips">
+        <span class="sdg-chip sdg-13">SDG 13: Climate Action</span>
+        <span class="sdg-chip sdg-11">SDG 11: Resilient Cities</span>
+        <span class="sdg-chip sdg-6">SDG 6: Clean Water</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="container">
+
+    <!-- Hero Pitch & One-Click Scenarios -->
+    <div class="card hero-flex">
+      <div>
+        <div class="hero-eyebrow">Interactive Prototype Demo</div>
+        <h2 class="hero-title">Hyperlocal Flood Risk & Advisory Simulation</h2>
+        <p class="hero-desc">
+          Fusing 24-hr rainfall forecasts (IMD) with citizen drain-blockage complaint logs (K-SMART) to generate explainable ward-level risk scores and bilingual citizen advisories.
+        </p>
+      </div>
+      <div class="scenario-btns">
+        <button onclick="loadScenario('A')" class="btn-preset btn-preset-a">
+          ● Scenario A (High Risk)
+        </button>
+        <button onclick="loadScenario('B')" class="btn-preset btn-preset-b">
+          ● Scenario B (Low Risk)
+        </button>
+        <button onclick="loadScenario('C')" class="btn-preset btn-preset-c">
+          🚩 Scenario C (Drain Flag)
+        </button>
+      </div>
+    </div>
+
+    <!-- 2-Column Grid: Inputs & Outputs -->
+    <div class="grid-main">
+
+      <!-- Left: Simulator Inputs -->
+      <div class="card" style="margin-top: 0;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-bottom:1px solid var(--border); padding-bottom:0.75rem;">
+          <div>
+            <h3 class="section-title">Ward Signal Inputs</h3>
+            <span class="section-sub" style="margin-bottom: 0;">Adjust meteorological & civic indicators</span>
+          </div>
+          <button onclick="loadScenario('A')" style="background:none; border:none; color:var(--text-muted); font-size:0.75rem; cursor:pointer; font-weight:600;">Reset</button>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 2fr 1fr; gap: 0.75rem; margin-bottom: 1.25rem;">
+          <div>
+            <label for="wardSelect">Target Urban Ward</label>
+            <select id="wardSelect" onchange="onWardSelectChange()">
+              <option value="Ward 12 (Kaloor North)|true">Ward 12 (Kaloor North) — Low Lying</option>
+              <option value="Ward 5 (Panampilly Nagar)|false">Ward 5 (Panampilly Nagar)</option>
+              <option value="Ward 9 (Ponekkara)|true">Ward 9 (Ponekkara) — Low Lying</option>
+              <option value="Ward 10 (Eroor)|false">Ward 10 (Eroor)</option>
+              <option value="Ward 7 (Kadavanthra)|false">Ward 7 (Kadavanthra)</option>
+              <option value="Ward 15 (Petta)|true">Ward 15 (Petta) — Low Lying</option>
+              <option value="Custom Ward|false">Custom Urban Ward</option>
+            </select>
+          </div>
+          <div>
+            <label>Topography</label>
+            <label class="checkbox-row">
+              <input type="checkbox" id="lowLyingCheck" onchange="updateScoring()">
+              <span>Low-lying zone</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Slider 1: 24-hr Rain -->
+        <div class="slider-box">
+          <div class="slider-header">
+            <div>
+              <span class="slider-label">24-Hour Rainfall (IMD)</span>
+              <span class="slider-hint">&gt;100 mm: +2 pts | 50–100 mm: +1 pt</span>
+            </div>
+            <div class="slider-badge"><span id="rainVal">130</span> mm</div>
+          </div>
+          <input type="range" id="rainSlider" min="0" max="220" step="5" value="130" oninput="onSliderInput()">
+          <div class="slider-ticks">
+            <span>0 mm</span>
+            <span style="color:#d97706; font-weight:700;">50 mm (Mod)</span>
+            <span style="color:#dc2626; font-weight:700;">100 mm (Heavy)</span>
+            <span>220 mm</span>
+          </div>
+        </div>
+
+        <!-- Slider 2: Drain Complaints -->
+        <div class="slider-box">
+          <div class="slider-header">
+            <div>
+              <span class="slider-label">Drain Blockage Complaints (7 Days · K-SMART)</span>
+              <span class="slider-hint">&gt;5 reports in 7 days: +1 pt</span>
+            </div>
+            <div class="slider-badge"><span id="compVal">7</span> reports</div>
+          </div>
+          <input type="range" id="compSlider" min="0" max="15" step="1" value="7" oninput="onSliderInput()">
+          <div class="slider-ticks">
+            <span>0</span>
+            <span style="color:#d97706; font-weight:700;">&gt;5 Threshold</span>
+            <span>15 reports</span>
+          </div>
+        </div>
+
+        <!-- Slider 3: River Level -->
+        <div class="slider-box">
+          <div class="slider-header">
+            <div>
+              <span class="slider-label">River / Reservoir Level (KSDMA)</span>
+              <span class="slider-hint">&gt;80% of danger mark: +1 pt</span>
+            </div>
+            <div class="slider-badge"><span id="resVal">90</span> %</div>
+          </div>
+          <input type="range" id="resSlider" min="0" max="100" step="5" value="90" oninput="onSliderInput()">
+          <div class="slider-ticks">
+            <span>0%</span>
+            <span style="color:#d97706; font-weight:700;">80% Danger Mark</span>
+            <span>100%</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right: Risk Evaluation & Advisories -->
+      <div class="output-card" id="riskCard" style="margin-top: 0;">
+
+        <div class="output-header">
+          <div>
+            <span class="risk-tag-sub">Classified Risk</span>
+            <div id="riskLevelText" class="risk-pill" style="color: var(--high-red);">
+              <span>🔴</span> HIGH RISK
+            </div>
+          </div>
+          <div>
+            <span class="risk-tag-sub" style="display:block; text-align:right;">Score</span>
+            <div class="score-large">
+              <span id="scoreText">4</span><span class="score-denom"> / 4</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Points Grid -->
+        <div class="points-bar">
+          <div>
+            <span class="pts-label">Rainfall</span>
+            <span class="pts-val" id="ptsRain" style="color:var(--high-red);">+2 pts</span>
+          </div>
+          <div>
+            <span class="pts-label">Complaints</span>
+            <span class="pts-val" id="ptsComp" style="color:var(--primary);">+1 pt</span>
+          </div>
+          <div>
+            <span class="pts-label">Reservoir</span>
+            <span class="pts-val" id="ptsRes" style="color:var(--primary);">+1 pt</span>
+          </div>
+        </div>
+
+        <!-- Infrastructure Banner -->
+        <div id="infraFlagBanner" class="infra-banner" style="display: none;">
+          <span style="font-size:1.1rem;">🚩</span>
+          <div>
+            <strong>Municipal Drain Inspection Required:</strong>
+            <div style="font-size:0.7rem; margin-top:0.2rem;">
+              Unresolved drain complaints exceed threshold on low-rain day. Surfacing infrastructure bottleneck before the storm.
+            </div>
+          </div>
+        </div>
+
+        <!-- English Advisory -->
+        <div class="adv-box">
+          <div class="adv-head">
+            <span class="adv-title">Citizen Advisory (English)</span>
+            <button onclick="copyText('advisoryEn')" class="btn-copy">Copy SMS</button>
+          </div>
+          <p id="advisoryEn" class="adv-text">
+            High flood risk in Ward 12. Heavy rainfall (130 mm in 24 h); 7 unresolved drain complaints in 7 days; Reservoir/river at 90% of danger mark. Avoid travel through low-lying areas after 6 PM. Keep emergency numbers ready (KSDMA Helpline: 1070).
+          </p>
+        </div>
+
+        <!-- Malayalam Advisory -->
+        <div class="adv-box">
+          <div class="adv-head">
+            <span class="adv-title">പ്രാദേശിക മുന്നറിയിപ്പ് (Malayalam)</span>
+            <button onclick="copyText('advisoryMl')" class="btn-copy">Copy</button>
+          </div>
+          <p id="advisoryMl" class="adv-text adv-text-ml">
+            Ward 12-ൽ കനത്ത വെള്ളപ്പൊക്ക സാധ്യതയുണ്ട്. കനത്ത മഴയും അഴുക്കുചാൽ തടസ്സവും സാധ്യത വർദ്ധിപ്പിക്കുന്നു. താഴ്ന്ന പ്രദേശങ്ങളിലൂടെയുള്ള യാത്ര ഒഴിവാക്കുക. അടിയന്തര സഹായത്തിന് 1070 നമ്പറിൽ ബന്ധപ്പെടുക.
+          </p>
+        </div>
+
+        <!-- Helpline Row -->
+        <div class="helpline-row">
+          <span>Kerala Disaster Helpline:</span>
+          <span class="badge-1070">KSDMA 1070</span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Ward Monitoring Board Table -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.75rem;">
+        <div>
+          <h3 class="section-title">Kochi Urban Catchment — 6-Ward Monitoring Board</h3>
+          <span class="section-sub">Click any ward row to load its readings into the simulator</span>
+        </div>
+        <div style="font-size:0.75rem; background:#f1f5f9; padding:0.35rem 0.65rem; border-radius:0.5rem; font-weight:600;">
+          City Reservoir: <strong style="color:var(--primary);">82% of danger mark</strong>
+        </div>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Ward Name</th>
+              <th>24-hr Rain</th>
+              <th>7d Complaints</th>
+              <th>Topography</th>
+              <th>Score</th>
+              <th>Risk Level</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr onclick="loadWardPreset('Ward 5 (Panampilly Nagar)', 60, 2, 82, false)">
+              <td style="font-weight:700;">Ward 5 (Panampilly Nagar)</td>
+              <td>60 mm</td>
+              <td>2 reports</td>
+              <td>Standard</td>
+              <td><strong>2</strong></td>
+              <td><span class="pill-sm" style="background:#fef3c7; color:#92400e;">Medium</span></td>
+              <td style="color:var(--secondary); font-weight:600;">Simulate ➔</td>
+            </tr>
+            <tr onclick="loadWardPreset('Ward 7 (Kadavanthra)', 25, 1, 82, false)">
+              <td style="font-weight:700;">Ward 7 (Kadavanthra)</td>
+              <td>25 mm</td>
+              <td>1 report</td>
+              <td>Standard</td>
+              <td><strong>1</strong></td>
+              <td><span class="pill-sm" style="background:#dcfce7; color:#166534;">Low</span></td>
+              <td style="color:var(--secondary); font-weight:600;">Simulate ➔</td>
+            </tr>
+            <tr onclick="loadWardPreset('Ward 9 (Ponekkara)', 40, 8, 82, true)">
+              <td style="font-weight:700;">Ward 9 (Ponekkara)</td>
+              <td>40 mm</td>
+              <td style="color:#d97706; font-weight:700;">8 reports</td>
+              <td>Low-lying</td>
+              <td><strong>2</strong></td>
+              <td><span class="pill-sm" style="background:#fef3c7; color:#92400e;">Medium 🚩</span></td>
+              <td style="color:var(--secondary); font-weight:600;">Simulate ➔</td>
+            </tr>
+            <tr onclick="loadWardPreset('Ward 10 (Eroor)', 85, 4, 82, false)">
+              <td style="font-weight:700;">Ward 10 (Eroor)</td>
+              <td>85 mm</td>
+              <td>4 reports</td>
+              <td>Standard</td>
+              <td><strong>2</strong></td>
+              <td><span class="pill-sm" style="background:#fef3c7; color:#92400e;">Medium</span></td>
+              <td style="color:var(--secondary); font-weight:600;">Simulate ➔</td>
+            </tr>
+            <tr onclick="loadWardPreset('Ward 12 (Kaloor North)', 130, 7, 82, true)">
+              <td style="font-weight:700;">Ward 12 (Kaloor North)</td>
+              <td style="color:#dc2626; font-weight:700;">130 mm</td>
+              <td style="color:#d97706; font-weight:700;">7 reports</td>
+              <td>Low-lying</td>
+              <td><strong>4</strong></td>
+              <td><span class="pill-sm" style="background:#fee2e2; color:#991b1b;">High</span></td>
+              <td style="color:var(--secondary); font-weight:600;">Simulate ➔</td>
+            </tr>
+            <tr onclick="loadWardPreset('Ward 15 (Petta)', 110, 3, 82, true)">
+              <td style="font-weight:700;">Ward 15 (Petta)</td>
+              <td style="color:#dc2626; font-weight:700;">110 mm</td>
+              <td>3 reports</td>
+              <td>Low-lying</td>
+              <td><strong>3</strong></td>
+              <td><span class="pill-sm" style="background:#fef3c7; color:#92400e;">Medium</span></td>
+              <td style="color:var(--secondary); font-weight:600;">Simulate ➔</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Architecture & IBM BOB -->
+    <div class="grid-2">
+      <div class="card" style="margin-top: 0;">
+        <h4 style="font-size:0.85rem; font-weight:700; text-transform:uppercase; margin-bottom:0.75rem; color:#1e293b;">4-Stage AI Workflow</h4>
+        <div class="step-item"><strong>1. Weak-Signal Fusion:</strong> 24h rain (IMD) + river level (KSDMA) + 7d drain complaints (K-SMART).</div>
+        <div class="step-item"><strong>2. Explainable Risk Scorer:</strong> Strict point allocation (+2, +1, +1, +1) ➜ 0-1 Low, 2-3 Med, 4+ High.</div>
+        <div class="step-item"><strong>3. Municipal Review Trigger:</strong> Complaints &gt; 5 with 0 rain points prompts proactive desilting.</div>
+        <div class="step-item"><strong>4. Bilingual Advisory Layer:</strong> Generates concise citizen alerts in English and Malayalam with helpline 1070.</div>
+      </div>
+
+      <div class="card" style="margin-top: 0;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+          <h4 style="font-size:0.85rem; font-weight:700; text-transform:uppercase; color:#1e293b;">Planned & Validated with IBM BOB</h4>
+          <span style="font-size:0.68rem; background:#e0f2fe; color:#0369a1; padding:0.15rem 0.5rem; border-radius:9999px; font-weight:700;">Plan Mode</span>
+        </div>
+        <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.6rem;">
+          IBM BOB analyzed scaling from 6 demo wards to 100+ production wards:
+        </p>
+        <ul style="font-size:0.75rem; color:var(--text-muted); padding-left:1.2rem; line-height:1.6;">
+          <li><strong>Temporal sync:</strong> Reconciled 3-hourly nowcasts with continuous complaint logs.</li>
+          <li><strong>Spatial basin mapping:</strong> Replaced uniform city reservoir with ward-specific gauges.</li>
+          <li><strong>Complaint normalization:</strong> Recommended per-capita density weighting.</li>
+          <li><strong>Hallucination guardrails:</strong> Enforced deterministic templates for Malayalam.</li>
+        </ul>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <strong>JalRakshak MVP</strong> · 1M1B AI + Sustainability Virtual Internship (September 2026) · Kerala Disaster Management Framework
+    </div>
+  </footer>
+
+  <!-- Script Logic -->
+  <script>
+    let currentWard = "Ward 12 (Kaloor North)";
+    let isLowLying = true;
+
+    const MALAYALAM_TEMPLATES = {
+      High: "{ward}-ൽ കനത്ത വെള്ളപ്പൊക്ക സാധ്യതയുണ്ട്. {drivers}താഴ്ന്ന പ്രദേശങ്ങളിലൂടെയുള്ള യാത്ര ഒഴിവാക്കുക. അടിയന്തര സഹായത്തിന് 1070 നമ്പറിൽ ബന്ധപ്പെടുക.",
+      Medium: "{ward}-ൽ ഇന്ന് ഇടത്തരം വെള്ളക്കെട്ട് സാധ്യതയുണ്ട്. {drivers}താഴ്ന്ന പ്രദേശങ്ങളിൽ വെള്ളം കയറാൻ സാധ്യത ഉള്ളതിനാൽ ജാഗ്രത പാലിക്കുക. വാഹനങ്ങൾ സുരക്ഷിത സ്ഥാനങ്ങളിലേക്ക് മാറ്റുക.",
+      Low: "{ward}-ൽ ഇന്ന് വെള്ളപ്പൊക്ക ഭീഷണി കുറവാണ്. സാധാരണ മുൻകരുതലുകൾ തുടരുക."
+    };
+
+    function onWardSelectChange() {
+      const select = document.getElementById("wardSelect");
+      const parts = select.value.split("|");
+      currentWard = parts[0];
+      isLowLying = parts[1] === "true";
+      document.getElementById("lowLyingCheck").checked = isLowLying;
+      updateScoring();
+    }
+
+    function onSliderInput() {
+      document.getElementById("rainVal").innerText = document.getElementById("rainSlider").value;
+      document.getElementById("compVal").innerText = document.getElementById("compSlider").value;
+      document.getElementById("resVal").innerText = document.getElementById("resSlider").value;
+      isLowLying = document.getElementById("lowLyingCheck").checked;
+      updateScoring();
+    }
+
+    function loadWardPreset(name, rain, comp, res, lowLying) {
+      currentWard = name;
+      isLowLying = lowLying;
+      document.getElementById("lowLyingCheck").checked = lowLying;
+
+      document.getElementById("rainSlider").value = rain;
+      document.getElementById("compSlider").value = comp;
+      document.getElementById("resSlider").value = res;
+
+      document.getElementById("rainVal").innerText = rain;
+      document.getElementById("compVal").innerText = comp;
+      document.getElementById("resVal").innerText = res;
+
+      const sel = document.getElementById("wardSelect");
+      let found = false;
+      for (let i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].value.startsWith(name)) {
+          sel.selectedIndex = i;
+          found = true;
+          break;
+        }
+      }
+      if (!found) sel.value = "Custom Ward|false";
+
+      updateScoring();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function loadScenario(type) {
+      if (type === 'A') {
+        loadWardPreset("Ward 12 (Kaloor North)", 130, 7, 90, true);
+      } else if (type === 'B') {
+        loadWardPreset("Ward 5 (Panampilly Nagar)", 60, 2, 60, false);
+      } else if (type === 'C') {
+        loadWardPreset("Ward 9 (Ponekkara)", 40, 8, 70, true);
+      }
+    }
+
+    function calculateRisk(rain, comp, res) {
+      let rainPts = 0;
+      if (rain > 100) rainPts = 2;
+      else if (rain >= 50) rainPts = 1;
+
+      let compPts = comp > 5 ? 1 : 0;
+      let resPts = res > 80 ? 1 : 0;
+
+      const score = rainPts + compPts + resPts;
+
+      let level = "Low";
+      if (score >= 4) level = "High";
+      else if (score >= 2) level = "Medium";
+
+      const infraReview = (compPts > 0 && rainPts === 0);
+
+      const factors = [];
+      if (rainPts === 2) factors.push(`Heavy rainfall (${rain} mm in 24 h)`);
+      else if (rainPts === 1) factors.push(`Moderate rainfall (${rain} mm in 24 h)`);
+      if (compPts > 0) factors.push(`${comp} unresolved drain complaints in 7 days`);
+      if (resPts > 0) factors.push(`Reservoir/river at ${res}% of danger mark`);
+
+      return { score, level, rainPts, compPts, resPts, infraReview, factors };
+    }
+
+    function generateAdvisories(result, ward, lowLying) {
+      const { level, infraReview, factors } = result;
+
+      // English Advisory
+      let en = "";
+      if (level === "Low" && infraReview) {
+        const comp = document.getElementById("compSlider").value;
+        en = `Low rainfall risk, but ${ward} has ${comp} unresolved drain complaints — recommend municipal inspection regardless of rainfall.`;
+      } else if (level === "High") {
+        const drivers = factors.length ? factors.join("; ") + ". " : "";
+        en = `High flood risk in ${ward}. ${drivers}Avoid travel through low-lying areas after 6 PM. Keep emergency numbers ready (KSDMA Helpline: 1070).`;
+      } else if (level === "Medium") {
+        const drivers = factors.length ? factors.join("; ") + ". " : "";
+        en = `Medium flood risk in ${ward} today. ${drivers}Expect waterlogging in low-lying stretches; move vehicles and valuables to safety and avoid night travel through such roads.`;
+      } else {
+        en = `Low flood risk in ${ward} today. Normal precautions advised.`;
+      }
+
+      if (lowLying && level !== "Low") {
+        en += " This ward is low-lying — be ready to shift to higher ground if water rises.";
+      }
+
+      // Malayalam Advisory
+      let ml = "";
+      if (level === "Low" && infraReview) {
+        const comp = document.getElementById("compSlider").value;
+        ml = `മഴ കുറവാണ്, എങ്കിലും ${ward}-ൽ ${comp} അഴുക്കുചാൽ പരാതികൾ പരിഹരിക്കപ്പെടാതെ കിടക്കുന്നു — അടിയന്തര നഗരസഭാ പരിശോധന ശുപാർശ ചെയ്യുന്നു.`;
+      } else if (level === "High") {
+        const driversMl = factors.length ? "കനത്ത മഴയും അഴുക്കുചാൽ തടസ്സവും സാധ്യത വർദ്ധിപ്പിക്കുന്നു. " : "";
+        ml = `${ward}-ൽ കനത്ത വെള്ളപ്പൊക്ക സാധ്യതയുണ്ട്. ${driversMl}താഴ്ന്ന പ്രദേശങ്ങളിലൂടെയുള്ള യാത്ര ഒഴിവാക്കുക. അടിയന്തര സഹായത്തിന് 1070 നമ്പറിൽ ബന്ധപ്പെടുക.`;
+      } else if (level === "Medium") {
+        const driversMl = factors.length ? "താഴ്ന്ന പ്രദേശങ്ങളിൽ വെള്ളം കയറാൻ സാധ്യത ഉള്ളതിനാൽ ജാഗ്രത പാലിക്കുക. " : "";
+        ml = `${ward}-ൽ ഇന്ന് ഇടത്തരം വെള്ളക്കെട്ട് സാധ്യതയുണ്ട്. ${driversMl}വാഹനങ്ങൾ സുരക്ഷിത സ്ഥാനങ്ങളിലേക്ക് മാറ്റുക.`;
+      } else {
+        ml = `${ward}-ൽ ഇന്ന് വെള്ളപ്പൊക്ക ഭീഷണി കുറവാണ്. സാധാരണ മുൻകരുതലുകൾ തുടരുക.`;
+      }
+
+      return { en, ml };
+    }
+
+    function updateScoring() {
+      const rain = parseFloat(document.getElementById("rainSlider").value);
+      const comp = parseInt(document.getElementById("compSlider").value);
+      const res = parseFloat(document.getElementById("resSlider").value);
+      isLowLying = document.getElementById("lowLyingCheck").checked;
+
+      const r = calculateRisk(rain, comp, res);
+      const adv = generateAdvisories(r, currentWard, isLowLying);
+
+      document.getElementById("scoreText").innerText = r.score;
+      document.getElementById("ptsRain").innerText = `+${r.rainPts} pt${r.rainPts === 1 ? '' : 's'}`;
+      document.getElementById("ptsComp").innerText = `+${r.compPts} pt${r.compPts === 1 ? '' : 's'}`;
+      document.getElementById("ptsRes").innerText = `+${r.resPts} pt${r.resPts === 1 ? '' : 's'}`;
+
+      const card = document.getElementById("riskCard");
+      const levelEl = document.getElementById("riskLevelText");
+      const flagBanner = document.getElementById("infraFlagBanner");
+
+      if (r.infraReview) {
+        flagBanner.style.display = "flex";
+      } else {
+        flagBanner.style.display = "none";
+      }
+
+      if (r.level === "High") {
+        levelEl.style.color = "var(--high-red)";
+        levelEl.innerHTML = `<span>🔴</span> HIGH RISK`;
+        card.style.background = "#fef2f2";
+        card.style.borderColor = "var(--high-border)";
+      } else if (r.level === "Medium") {
+        levelEl.style.color = "var(--med-amber)";
+        levelEl.innerHTML = `<span>🟡</span> MEDIUM RISK`;
+        card.style.background = "#fffbeb";
+        card.style.borderColor = "var(--med-border)";
+      } else {
+        levelEl.style.color = "var(--low-green)";
+        levelEl.innerHTML = `<span>🟢</span> LOW RISK`;
+        card.style.background = "#f0fdf4";
+        card.style.borderColor = "var(--low-border)";
+      }
+
+      document.getElementById("advisoryEn").innerText = adv.en;
+      document.getElementById("advisoryMl").innerText = adv.ml;
+    }
+
+    function copyText(id) {
+      const text = document.getElementById(id).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Advisory copied to clipboard!");
+      });
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      loadScenario('A');
+    });
+  </script>
+
+</body>
+</html>

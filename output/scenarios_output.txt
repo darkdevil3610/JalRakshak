@@ -1,0 +1,42 @@
+JalRakshak — AI Flood Early-Warning & Advisory Assistant
+========================================================================
+
+Scenario A — Ward 12
+  Input       : rainfall 130 mm / 24 h, 7 drain complaints (7 d), reservoir 90% of danger mark
+  Scoring     : rainfall +2, complaints +1, reservoir +1
+  Result      : score 4 -> High risk
+  Advisory EN : High flood risk in Ward 12. Heavy rainfall (130 mm in 24 h); 7 unresolved drain complaints in 7 days; Reservoir/river at 90% of danger mark. Avoid travel through low-lying areas after 6 PM. Keep emergency numbers ready (KSDMA Helpline: 1070).
+  Advisory ML : Ward 12-ൽ കനത്ത വെള്ളപ്പൊക്ക സാധ്യതയുണ്ട്. കനത്ത മഴയും അഴുക്കുചാൽ തടസ്സവും സാധ്യത വർദ്ധിപ്പിക്കുന്നു. താഴ്ന്ന പ്രദേശങ്ങളിലൂടെയുള്ള യാത്ര ഒഴിവാക്കുക. അടിയന്തര സഹായത്തിന് 1070 നമ്പറിൽ ബന്ധപ്പെടുക.
+
+========================================================================
+
+Scenario B — Ward 5
+  Input       : rainfall 60 mm / 24 h, 2 drain complaints (7 d), reservoir 60% of danger mark
+  Scoring     : rainfall +1, complaints +0, reservoir +0
+  Result      : score 1 -> Low risk
+  Advisory EN : Low flood risk in Ward 5 today. Normal precautions advised.
+  Advisory ML : Ward 5-ൽ ഇന്ന് വെള്ളപ്പൊക്ക ഭീഷണി കുറവാണ്. സാധാരണ മുൻകരുതലുകൾ തുടരുക.
+
+========================================================================
+
+Scenario C — Ward 9
+  Input       : rainfall 40 mm / 24 h, 8 drain complaints (7 d), reservoir 70% of danger mark
+  Scoring     : rainfall +0, complaints +1, reservoir +0
+  Result      : score 1 -> Low risk  [flag: municipal drain inspection]
+  Advisory EN : Low rainfall risk, but Ward 9 has 8 unresolved drain complaints — recommend municipal inspection regardless of rainfall.
+  Advisory ML : മഴ കുറവാണ്, എങ്കിലും Ward 9-ൽ 8 അഴുക്കുചാൽ പരാതികൾ പരിഹരിക്കപ്പെടാതെ കിടക്കുന്നു — അടിയന്തര നഗരസഭാ പരിശോധന ശുപാർശ ചെയ്യുന്നു.
+
+========================================================================
+
+Live demo board — six simulated wards (today's snapshot)
+------------------------------------------------------------------------
+Ward 5 (Panampilly Nagar)    rain    60 mm | complaints  2 | score 2 | Medium
+Ward 7 (Kadavanthra)         rain    25 mm | complaints  1 | score 1 | Low   
+Ward 9 (Ponekkara)           rain    40 mm | complaints  8 | score 2 | Medium  :flag
+Ward 10 (Eroor)              rain    85 mm | complaints  4 | score 2 | Medium
+Ward 12 (Kaloor North)       rain   130 mm | complaints  7 | score 4 | High  
+Ward 15 (Petta)              rain   110 mm | complaints  3 | score 3 | Medium
+------------------------------------------------------------------------
+City reservoir/river context: 82% of danger mark
+:flag = drain complaints above threshold with no rainfall signal —
+       ward flagged for municipal inspection (Scenario C behaviour).

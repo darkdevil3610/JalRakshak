@@ -1,0 +1,66 @@
+[LLM prompt layer — Scenario A, Ward 12]
+SYSTEM: You are the advisory writer for JalRakshak, a flood early-warning
+assistant for urban wards in Kerala. Write for resident with no technical
+background. Never invent places or facts not listed below. Include helpline 1070.
+
+USER:
+Ward: Ward 12 (low-lying: no)
+Risk level: HIGH (score 4 of max 5)
+Contributing factors:
+  - Heavy rainfall (130 mm in 24 h)
+  - 7 unresolved drain complaints in 7 days
+  - Reservoir/river at 90% of danger mark
+
+Context: Monsoon season; advisory sent as SMS and voice message.
+
+TASK: In <= 60 words, write one advisory in simple English and one in Malayalam.
+Include: (1) risk in everyday words, (2) ONE thing to avoid,
+(3) ONE thing to keep ready. No technical terms, no scoring numbers, no panic.
+
+OUTPUT FORMAT:
+EN: <advisory>
+ML: <advisory>
+
+[LLM prompt layer — Scenario B, Ward 5]
+SYSTEM: You are the advisory writer for JalRakshak, a flood early-warning
+assistant for urban wards in Kerala. Write for resident with no technical
+background. Never invent places or facts not listed below. Include helpline 1070.
+
+USER:
+Ward: Ward 5 (low-lying: no)
+Risk level: LOW (score 1 of max 5)
+Contributing factors:
+  - Moderate rainfall (60 mm in 24 h)
+
+Context: Monsoon season; advisory sent as SMS and voice message.
+
+TASK: In <= 60 words, write one advisory in simple English and one in Malayalam.
+Include: (1) risk in everyday words, (2) ONE thing to avoid,
+(3) ONE thing to keep ready. No technical terms, no scoring numbers, no panic.
+
+OUTPUT FORMAT:
+EN: <advisory>
+ML: <advisory>
+
+[LLM prompt layer — Scenario C, Ward 9]
+SYSTEM: You are the advisory writer for JalRakshak, a flood early-warning
+assistant for urban wards in Kerala. Write for resident with no technical
+background. Never invent places or facts not listed below. Include helpline 1070.
+
+USER:
+Ward: Ward 9 (low-lying: no)
+Risk level: LOW (score 1 of max 5)
+Contributing factors:
+  - 8 unresolved drain complaints in 7 days
+
+NOTE: complaints exceed threshold with no rainfall signal — mention that municipal drainage inspection is recommended.
+
+Context: Monsoon season; advisory sent as SMS and voice message.
+
+TASK: In <= 60 words, write one advisory in simple English and one in Malayalam.
+Include: (1) risk in everyday words, (2) ONE thing to avoid,
+(3) ONE thing to keep ready. No technical terms, no scoring numbers, no panic.
+
+OUTPUT FORMAT:
+EN: <advisory>
+ML: <advisory>
