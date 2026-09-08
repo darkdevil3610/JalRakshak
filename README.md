@@ -6,6 +6,15 @@
 
 ---
 
+## 0. Presentation Deck
+
+The complete 10-slide project presentation is available in two formats:
+
+* **[View PDF (recommended)](./deck/JalRakshak_MVP.pdf)** — opens directly in GitHub's built-in viewer, no download needed.
+* **[Download PPTX](./deck/JalRakshak_MVP.pptx)** — editable PowerPoint source file.
+
+---
+
 ## 1. Project Overview
 
 * **One-line pitch:** A conceptual AI assistant that combines rainfall data with local drain-blockage complaint patterns to generate ward-level flood risk scores and plain-language advisories for residents in English and Malayalam.
@@ -139,29 +148,5 @@ python src/run_scenarios.py
 ```bash
 cd deck && node build_deck.js
 ```
-
----
-
-## 8. Free Web Interface Hosting (GitHub Pages)
-
-A standalone, zero-dependency web interface is included in [`index.html`](./index.html). It can be opened locally in any browser or deployed live to **GitHub Pages** for free:
-
-1. **Initialize & Push to GitHub:**
-   ```bash
-   git init
-   git add .
-   git commit -m "feat: JalRakshak MVP release with web simulator"
-   git branch -M main
-   git remote add origin https://github.com/<your-username>/JalRakshak.git
-   git push -u origin main
-   ```
-2. **Enable GitHub Pages:**
-   * In your repository on GitHub, click **Settings** ➔ **Pages**.
-   * Under **Build and deployment** ➔ **Source**, select **Deploy from a branch**.
-   * Under **Branch**, select `main` and folder `/ (root)`.
-   * Click **Save**.
-3. **Live URL:**
-   Your interactive dashboard will be live within 1–2 minutes at:
-   `https://<your-username>.github.io/JalRakshak/`
 
 ```
